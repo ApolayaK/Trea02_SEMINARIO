@@ -15,15 +15,6 @@ Actualmente solo contiene la **estructura mínima funcional**, sin diseño ni es
 ---
 
 ## 📂 Estructura del proyecto  
+![Vista previa del CRUD](img/estructura.png)
 
-Trea02_SEMINARIO/
-├── public/ # recursos públicos
-│ └── uploads/ # aquí se guardan las imágenes subidas
-├── views/ # vistas con EJS (aún sin diseño)
-│ ├── index.ejs # lista de cotizaciones
-│ ├── new.ejs # formulario crear nueva cotización
-│ └── edit.ejs # formulario editar cotización
-├── server.js # servidor principal
-├── package.json
-└── README.md
 
