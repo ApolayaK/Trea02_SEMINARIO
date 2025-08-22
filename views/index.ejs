@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Cotizaciones</title>
+</head>
+<body>
+  <h1>Lista de Cotizaciones</h1>
+  <a href="/new">➕ Nueva cotización</a>
+  <table border="1">
+    <tr>
+      <th>ID</th><th>Cliente</th><th>Imagen</th><th>Precio</th><th>Acciones</th>
+    </tr>
+    <% cotizaciones.forEach(c => { %>
+      <tr>
+        <td><%= c.id %></td>
+        <td><%= c.cliente %></td>
+        <td><img src="/uploads/<%= c.Imagen %>" width="100"></td>
+        <td>S/ <%= c.precio %></td>
+        <td>
+          <a href="/edit/<%= c.id %>">✏️ Editar</a>
+          <a href="/delete/<%= c.id %>">🗑️ Eliminar</a>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+</body>
+</html>

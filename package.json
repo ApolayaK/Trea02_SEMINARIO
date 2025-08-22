@@ -1,0 +1,27 @@
+{
+  "name": "trea02_seminario",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ApolayaK/Trea02_SEMINARIO.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ApolayaK/Trea02_SEMINARIO/issues"
+  },
+  "homepage": "https://github.com/ApolayaK/Trea02_SEMINARIO#readme",
+  "description": "",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "mysql2": "^3.14.3"
+  }
+}

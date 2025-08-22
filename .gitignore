@@ -1,0 +1,13 @@
+
+```gitignore
+# Node.js
+node_modules/
+npm-debug.log
+package-lock.json
+
+# Imágenes subidas
+public/uploads/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
