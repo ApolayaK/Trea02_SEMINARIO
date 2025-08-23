@@ -3,26 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <title>Cotizaciones</title>
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-  <h1>Lista de Cotizaciones</h1>
-  <a href="/new">➕ Nueva cotización</a>
-  <table border="1">
-    <tr>
-      <th>ID</th><th>Cliente</th><th>Imagen</th><th>Precio</th><th>Acciones</th>
-    </tr>
-    <% cotizaciones.forEach(c => { %>
-      <tr>
-        <td><%= c.id %></td>
-        <td><%= c.cliente %></td>
-        <td><img src="/uploads/<%= c.Imagen %>" width="100"></td>
-        <td>S/ <%= c.precio %></td>
-        <td>
-          <a href="/edit/<%= c.id %>">✏️ Editar</a>
-          <a href="/delete/<%= c.id %>">🗑️ Eliminar</a>
-        </td>
-      </tr>
-    <% }) %>
-  </table>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+  <!-- NAVBAR -->
+  <nav class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-orange-500 flex items-center gap-2">
+        <i data-lucide="briefcase"></i> Cotizaciones
+      </h1>
+      <a href="/new" 
+         class="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white font-semibold rounded-lg shadow hover:bg-orange-600 transition">
+        <i data-lucide="plus-circle"></i> Nueva
+      </a>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO -->
+  <div class="max-w-7xl mx-auto px-6 py-10">
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      
+      <% cotizaciones.forEach(c => { %>
+        <div class="bg-white border border-gray-200 rounded-xl shadow hover:shadow-md hover:scale-[1.01] transition">
+          <!-- Imagen -->
+          <img src="/uploads/<%= c.Imagen %>" alt="Imagen de <%= c.cliente %>" 
+               class="w-full h-48 object-cover rounded-t-xl">
+          
+          <!-- Contenido -->
+          <div class="p-5">
+            <h2 class="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
+              <i data-lucide="user"></i> <%= c.cliente %>
+            </h2>
+            <p class="text-xl font-bold text-orange-500 flex items-center gap-2">
+              <i data-lucide="tag"></i> S/ <%= c.precio %>
+            </p>
+          </div>
+
+          <!-- Acciones -->
+          <div class="px-5 py-3 flex justify-between border-t border-gray-100">
+            <a href="/edit/<%= c.id %>" 
+               class="text-orange-500 hover:text-orange-600 font-medium flex items-center gap-1">
+              <i data-lucide="pencil"></i> Editar
+            </a>
+            <a href="/delete/<%= c.id %>" 
+               onclick="return confirm('¿Eliminar esta cotización?');"
+               class="text-red-500 hover:text-red-600 font-medium flex items-center gap-1">
+              <i data-lucide="trash-2"></i> Eliminar
+            </a>
+          </div>
+        </div>
+      <% }) %>
+
+    </div>
+  </div>
+
+  <!-- Inicializar íconos -->
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
 </html>
