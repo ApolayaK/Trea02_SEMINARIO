@@ -2,6 +2,7 @@ const express = require("express");
 const mysql = require("mysql2");
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
 
 const app = express();
 const port = 3000;
@@ -14,8 +15,8 @@ app.set("view engine", "ejs");
 // Config DB
 const db = mysql.createConnection({
   host: "localhost",
-  user: "root",   
-  password: "",   
+  user: "root",
+  password: "",
   database: "cotizaciones_productos"
 });
 
@@ -23,12 +24,12 @@ const db = mysql.createConnection({
 const storage = multer.diskStorage({
   destination: "./public/uploads/",
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); 
+    cb(null, Date.now() + path.extname(file.originalname));
   }
 });
 const upload = multer({ storage });
 
-// Rutas
+// ---------------------- RUTAS ----------------------
 
 // Listar
 app.get("/", (req, res) => {
@@ -66,33 +67,65 @@ app.get("/edit/:id", (req, res) => {
   });
 });
 
-// Actualizar
+// Actualizar la imagen
 app.post("/edit/:id", upload.single("imagen"), (req, res) => {
   const { cliente, precio } = req.body;
-  let query, values;
 
   if (req.file) {
-    query = "UPDATE cotizaciones SET cliente=?, Imagen=?, precio=? WHERE id=?";
-    values = [cliente, req.file.filename, precio, req.params.id];
+    // Buscar la imagen antigua
+    db.query("SELECT Imagen FROM cotizaciones WHERE id=?", [req.params.id], (err, result) => {
+      if (err) throw err;
+
+      if (result.length > 0) {
+        const oldImagePath = path.join(__dirname, "public", "uploads", result[0].Imagen);
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath); // elimina la anterior
+        }
+      }
+
+      // Guardar la nueva en DB
+      db.query(
+        "UPDATE cotizaciones SET cliente=?, Imagen=?, precio=? WHERE id=?",
+        [cliente, req.file.filename, precio, req.params.id],
+        (err) => {
+          if (err) throw err;
+          res.redirect("/");
+        }
+      );
+    });
   } else {
-    query = "UPDATE cotizaciones SET cliente=?, precio=? WHERE id=?";
-    values = [cliente, precio, req.params.id];
+    // Si no hay nueva imagen, solo actualizar texto y precio
+    db.query(
+      "UPDATE cotizaciones SET cliente=?, precio=? WHERE id=?",
+      [cliente, precio, req.params.id],
+      (err) => {
+        if (err) throw err;
+        res.redirect("/");
+      }
+    );
   }
-
-  db.query(query, values, (err) => {
-    if (err) throw err;
-    res.redirect("/");
-  });
 });
 
-// Eliminar
+// Eliminar (con eliminación de la imagen)
 app.get("/delete/:id", (req, res) => {
-  db.query("DELETE FROM cotizaciones WHERE id=?", [req.params.id], (err) => {
+  db.query("SELECT Imagen FROM cotizaciones WHERE id=?", [req.params.id], (err, result) => {
     if (err) throw err;
-    res.redirect("/");
+
+    if (result.length > 0) {
+      const imagePath = path.join(__dirname, "public", "uploads", result[0].Imagen);
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath); // elimina la imagen del disco
+      }
+    }
+
+    db.query("DELETE FROM cotizaciones WHERE id=?", [req.params.id], (err) => {
+      if (err) throw err;
+      res.redirect("/");
+    });
   });
 });
 
+// ---------------------- INICIAR SERVIDOR ----------------------
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
 });

@@ -7,6 +7,7 @@ package-lock.json
 
 # Imágenes subidas
 public/uploads/
+img/estructura.png
 
 # Archivos del sistema
 .DS_Store

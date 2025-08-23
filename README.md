@@ -17,4 +17,21 @@ Actualmente solo contiene la **estructura mínima funcional**, sin diseño ni es
 ## 📂 Estructura del proyecto  
 ![Vista previa del CRUD](img/estructura.png)
 
+---
 
+## 🔧 Características principales  
+✔️ CRUD completo (Crear, Leer, Actualizar y Eliminar cotizaciones).  
+✔️ Manejo de imágenes con **Multer**.  
+✔️ Las imágenes ya **no se acumulan en la carpeta `uploads/`**:  
+   - Al **actualizar** una cotización con nueva imagen, la anterior se elimina automáticamente.  
+   - Al **eliminar** una cotización, también se borra su imagen física.  
+✔️ Uso de **EJS** para vistas dinámicas.  
+✔️ Base de datos MySQL conectada con **mysql2**.  
+
+---
+
+## 📌 Mejoras pendientes  
+- Agregar diseño con CSS/Bootstrap/Tailwind.  
+- Manejo de errores más amigable en vistas.  
+- Agregar navegación más clara (botones de volver a `index`, etc).  
+- Crear un archivo de configuración para separar credenciales de la BD.  
