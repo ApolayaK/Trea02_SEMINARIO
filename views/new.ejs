@@ -47,7 +47,6 @@
                class="block w-full text-sm text-gray-600 border border-gray-300 rounded-lg cursor-pointer file:mr-4 file:py-2 file:px-4 
                       file:rounded-md file:border-0 file:text-sm file:font-semibold 
                       file:bg-orange-500 file:text-white hover:file:bg-orange-600">
-        <!-- Preview -->
         <div class="mt-3">
           <img id="preview" class="w-32 h-32 object-cover rounded-lg border border-gray-200 shadow-sm hidden">
         </div>
@@ -70,7 +69,7 @@
   <script>
     lucide.createIcons();
 
-    // Preview de imagen
+    // Vista previa de imagen
     const input = document.querySelector('input[name="imagen"]');
     const preview = document.getElementById('preview');
     input.addEventListener('change', e => {

@@ -1,20 +1,24 @@
-# 📦 CRUD de Cotizaciones con Express.js + MySQL  
+# CRUD de Cotizaciones con Express.js + MySQL  
 
-Este proyecto es un **CRUD básico** desarrollado con **Node.js + Express.js** como framework principal y **MySQL** como base de datos.  
-Incluye manejo de imágenes y páginas de error personalizadas.  
+Proyecto de gestión de cotizaciones desarrollado con **Node.js (Express.js)** y **MySQL**.  
+Incluye manejo de imágenes, confirmación de eliminación y páginas de error personalizadas.  
 
----
+## Características  
+- CRUD completo: crear, leer, actualizar y eliminar cotizaciones.  
+- Subida y gestión de imágenes con Multer.  
+- Eliminación automática de imágenes al actualizar o borrar registros.  
+- Confirmación de seguridad antes de eliminar.  
+- Vistas dinámicas con EJS.  
+- Manejo de errores con páginas personalizadas **404** y **500**.  
+- Código comentado para fácil comprensión.  
 
-## 📂 Estructura del proyecto  
+## Mejoras realizadas  
+- Se añadieron comentarios en el código.  
+- Manejo de errores optimizado (404 y 500).  
+- Mensaje de confirmación antes de eliminar registros.  
+
+
+## Estructura final del proyecto  
 ![Vista previa del CRUD](img/estructura.png)
 
----
 
-## 🔧 Características principales  
-✔️ CRUD completo (Crear, Leer, Actualizar y Eliminar cotizaciones).  
-✔️ Manejo de imágenes.  
-✔️ Eliminación automática de imágenes al **actualizar** o **eliminar** cotizaciones.  
-✔️ Vistas dinámicas con diseño limpio.  
-✔️ **Manejo de errores mejorado**:  
-   - Página **404** para rutas o IDs inexistentes.  
-   - Página **500** para errores internos del servidor.  

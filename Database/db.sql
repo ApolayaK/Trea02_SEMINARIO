@@ -2,17 +2,13 @@ CREATE DATABASE cotizaciones_productos;
 USE cotizaciones_productos;
 
 CREATE TABLE cotizaciones (
-	id INT AUTO_INCREMENT PRIMARY KEY,
-	cliente VARCHAR(100) NOT NULL,
-	Imagen VARCHAR(100) NOT NULL,
-	precio DECIMAL(10, 2) NOT NULL
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  cliente VARCHAR(100) NOT NULL,
+  precio DECIMAL(10,2) NOT NULL,
+  Imagen VARCHAR(255) DEFAULT NULL
 );
 
-INSERT INTO cotizaciones (cliente, Imagen, precio) VALUES
-('Cliente A', 'imagen_a.jpg', 100.00),
-('Cliente B', 'imagen_b.jpg', 150.50),
-('Cliente C', 'imagen_c.jpg', 200.75);
+-- SELECT * FROM cotizaciones;
+-- DROP TABLE cotizaciones;
 
-SELECT * FROM cotizaciones;
-
-DROP DATABASE cotizaciones_productos;
+-- DROP DATABASE cotizaciones_productos;
