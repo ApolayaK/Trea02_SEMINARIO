@@ -7,12 +7,12 @@ const fs = require("fs");
 const app = express();
 const port = 3000;
 
-// Middleware
+// ---------------------- MIDDLEWARE ----------------------
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 
-// Config DB
+// ---------------------- CONFIG DB ----------------------
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -20,7 +20,7 @@ const db = mysql.createConnection({
   database: "cotizaciones_productos"
 });
 
-// Config Multer (subida de imágenes)
+// ---------------------- CONFIG MULTER ----------------------
 const storage = multer.diskStorage({
   destination: "./public/uploads/",
   filename: (req, file, cb) => {
@@ -31,10 +31,13 @@ const upload = multer({ storage });
 
 // ---------------------- RUTAS ----------------------
 
-// Listar
+// Listar cotizaciones
 app.get("/", (req, res) => {
   db.query("SELECT * FROM cotizaciones", (err, results) => {
-    if (err) throw err;
+    if (err) {
+      console.error("❌ Error DB:", err);
+      return res.status(500).render("error/500", { error: err });
+    }
     res.render("index", { cotizaciones: results });
   });
 });
@@ -47,85 +50,127 @@ app.get("/new", (req, res) => {
 // Guardar nuevo
 app.post("/new", upload.single("imagen"), (req, res) => {
   const { cliente, precio } = req.body;
-  const imagen = req.file.filename;
+  const imagen = req.file ? req.file.filename : null;
 
   db.query(
     "INSERT INTO cotizaciones (cliente, Imagen, precio) VALUES (?, ?, ?)",
     [cliente, imagen, precio],
     (err) => {
-      if (err) throw err;
+      if (err) {
+        console.error("❌ Error al insertar:", err);
+        return res.status(500).render("error/500", { error: err });
+      }
       res.redirect("/");
     }
   );
 });
 
-// Editar
+// Editar (mostrar formulario)
 app.get("/edit/:id", (req, res) => {
   db.query("SELECT * FROM cotizaciones WHERE id = ?", [req.params.id], (err, result) => {
-    if (err) throw err;
+    if (err) {
+      console.error("❌ Error DB:", err);
+      return res.status(500).render("error/500", { error: err });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).render("error/404", { url: req.originalUrl });
+    }
+
     res.render("edit", { cotizacion: result[0] });
   });
 });
 
-// Actualizar la imagen
+// Actualizar cotización
 app.post("/edit/:id", upload.single("imagen"), (req, res) => {
   const { cliente, precio } = req.body;
 
-  if (req.file) {
-    // Buscar la imagen antigua
-    db.query("SELECT Imagen FROM cotizaciones WHERE id=?", [req.params.id], (err, result) => {
-      if (err) throw err;
+  db.query("SELECT * FROM cotizaciones WHERE id=?", [req.params.id], (err, result) => {
+    if (err) {
+      console.error("❌ Error DB:", err);
+      return res.status(500).render("error/500", { error: err });
+    }
 
-      if (result.length > 0) {
-        const oldImagePath = path.join(__dirname, "public", "uploads", result[0].Imagen);
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath); // elimina la anterior
-        }
+    if (result.length === 0) {
+      return res.status(404).render("error/404", { url: req.originalUrl });
+    }
+
+    if (req.file) {
+      // Borrar imagen antigua
+      const oldImagePath = path.join(__dirname, "public", "uploads", result[0].Imagen);
+      if (fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath);
       }
 
-      // Guardar la nueva en DB
       db.query(
         "UPDATE cotizaciones SET cliente=?, Imagen=?, precio=? WHERE id=?",
         [cliente, req.file.filename, precio, req.params.id],
         (err) => {
-          if (err) throw err;
+          if (err) {
+            console.error("❌ Error al actualizar:", err);
+            return res.status(500).render("error/500", { error: err });
+          }
           res.redirect("/");
         }
       );
-    });
-  } else {
-    // Si no hay nueva imagen, solo actualizar texto y precio
-    db.query(
-      "UPDATE cotizaciones SET cliente=?, precio=? WHERE id=?",
-      [cliente, precio, req.params.id],
-      (err) => {
-        if (err) throw err;
-        res.redirect("/");
-      }
-    );
-  }
+    } else {
+      // Sin nueva imagen
+      db.query(
+        "UPDATE cotizaciones SET cliente=?, precio=? WHERE id=?",
+        [cliente, precio, req.params.id],
+        (err) => {
+          if (err) {
+            console.error("❌ Error al actualizar:", err);
+            return res.status(500).render("error/500", { error: err });
+          }
+          res.redirect("/");
+        }
+      );
+    }
+  });
 });
 
-// Eliminar (con eliminación de la imagen)
+// Eliminar cotización
 app.get("/delete/:id", (req, res) => {
-  db.query("SELECT Imagen FROM cotizaciones WHERE id=?", [req.params.id], (err, result) => {
-    if (err) throw err;
+  db.query("SELECT * FROM cotizaciones WHERE id=?", [req.params.id], (err, result) => {
+    if (err) {
+      console.error("❌ Error DB:", err);
+      return res.status(500).render("error/500", { error: err });
+    }
 
-    if (result.length > 0) {
-      const imagePath = path.join(__dirname, "public", "uploads", result[0].Imagen);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath); // elimina la imagen del disco
-      }
+    if (result.length === 0) {
+      return res.status(404).render("error/404", { url: req.originalUrl });
+    }
+
+    const imagePath = path.join(__dirname, "public", "uploads", result[0].Imagen);
+    if (fs.existsSync(imagePath)) {
+      fs.unlinkSync(imagePath);
     }
 
     db.query("DELETE FROM cotizaciones WHERE id=?", [req.params.id], (err) => {
-      if (err) throw err;
+      if (err) {
+        console.error("❌ Error al eliminar:", err);
+        return res.status(500).render("error/500", { error: err });
+      }
       res.redirect("/");
     });
   });
 });
 
+// ---------------------- MANEJO DE ERRORES ----------------------
+
+// 404: recurso no encontrado
+app.use((req, res, next) => {
+  res.status(404).render("error/404", { url: req.originalUrl });
+});
+
+// 500: error interno
+app.use((err, req, res, next) => {
+  console.error("❌ Error en el servidor:", err.stack);
+  res.status(500).render("error/500", { error: err });
+});
+
 // ---------------------- INICIAR SERVIDOR ----------------------
 app.listen(port, () => {
-  console.log(`Servidor corriendo en http://localhost:${port}`);
+  console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
 });
